@@ -3,7 +3,7 @@
 // --- 1. Déclaration des Produits ---
 const PRODUCTS = [
     // POKÉMON (Nom "Shadow Vulture" utilisé comme variante non-offensive du nom masqué)
-    { id: 1, name: 'Shadow Vulture EX', category: 'POKÉMON', price: 49.99, imageUrl: 'https://i.imgur.com/3FumhPU.jpeg', alt: 'Carte Pokémon Shadow Vulture EX', description: 'Une carte Pokémon légendaire, connue pour ses attaques imprévisibles et son design de néon sombre. Le prix est élevé, mais le swag l\'est encore plus. Garantie 100% de glitchiness.' },
+    { id: 1, name: 'Same_Niggaz (ex)', category: 'POKÉMON', price: 49.99, imageUrl: 'https://i.imgur.com/3FumhPU.jpeg', alt: 'Carte Pokémon Same_Niggaz (ex)', description: 'Une carte Pokémon légendaire, connue pour ses attaques imprévisibles sur les noirs et son design de néon sombre. Le prix est élevé, mais le swag l\'est encore plus. Garantie 100% de glitchiness.' },
     { id: 2, name: 'Kyls (eclipse)', category: 'POKÉMON', price: 39.99, imageUrl: 'https://i.imgur.com/y7Wrkgu.png', alt: 'Carte Pokémon Kyls (eclipse)', description: 'Une carte rare de l\'éclipse. L\'effet Glassmorphism sur sa surface est presque hypnotique. Peut provoquer une légère envie de danser le robot.' },
     { id: 3, name: 'Mega Degrade', category: 'POKÉMON', price: 29.99, imageUrl: 'https://i.imgur.com/1sCoZFy.png', alt: 'Carte Pokémon Mega Degrade', description: 'Le Dégradé ultime. Ses couleurs changent subtilement, vous donnant l\'impression que votre écran est cassé. Achetez-la, et votre vie passera en mode ralenti.' },
     // CLASH ROYAL
