@@ -3,106 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Card Goofy - Vente de Cartes Pro/Goofy</title>
+    <title>Kyls TCG - Le Magasin du Chaos Contrôlé</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 </head>
-<body>
-    <div id="cookie-popup" class="cookie-popup" role="dialog" aria-modal="true" aria-labelledby="cookie-title" aria-describedby="cookie-description" aria-hidden="true">
-        <h2 id="cookie-title" class="cookie-title glitch-text">🍪 Alerte Cookies Suspectes 🍪</h2>
-        <p id="cookie-description">Nous utilisons des cookies très, très, TRÈS importants pour le fonctionnement du site. Et pour voler votre âme. Acceptez ou soyez maudit.</p>
-        <div class="cookie-actions">
-            <button id="accept-cookies" class="goofy-button neon-button">Accepter (âme incluse)</button>
-            <button id="refuse-cookies" class="goofy-button neon-button refuse-button">Refuser (BOUM !)</button>
-        </div>
-    </div>
+<body class="glitch-bg">
 
-    <header class="sticky-header">
-        <div class="container">
-            <h1 class="logo glitch-text">Card <span class="goofy-span">Goofy</span> <span class="neon-text">Shop</span></h1>
-            <nav>
-                <a href="#" class="nav-link bounce-on-hover" onclick="showHomeView()">Accueil</a>
-                <a href="#products" class="nav-link bounce-on-hover">Produits</a>
-            </nav>
-            <div class="cart-icon-container" aria-label="Panier">
-                <button id="open-cart-btn" class="cart-button goofy-button" aria-controls="cart-drawer" aria-expanded="false" title="Ouvrir le panier">
-                    <span role="img" aria-label="Icône panier">🛒</span>
-                    <span id="cart-counter" class="cart-counter pulse-animation" aria-live="polite">0</span>
-                </button>
-            </div>
-        </div>
+    <header id="main-header" class="shake-hard">
+        <h1>KYLS TCG ABSURD STORE <span class="neon-title">⚡ OFFICIAL</span></h1>
+        <nav>
+            <button onclick="router.navigate('shop')" class="nav-button">Boutique du Chaos</button>
+            <button onclick="router.navigate('goofy')" class="nav-button">Sons Hervé (Goofy Button Panel)</button>
+        </nav>
     </header>
 
-    <main id="main-content">
-        <section class="hero-section">
-            <div class="hero-content">
-                <h2 class="glitch-text">Collection de Cartes **Rares** et **Absurdes**</h2>
-                <p>Découvrez notre sélection : du Pro au Goofy !</p>
-            </div>
+    <main id="app-container">
+        
+        <section id="shop-view" class="view">
+            <h2>Nos Cartes Rares (Absolument Inutiles)</h2>
+            <div id="card-list" class="grid-container">
+                </div>
         </section>
 
-        <section class="controls-section container">
-            <div class="controls-group">
-                <label for="category-filter">Filtre Catégorie:</label>
-                <select id="category-filter" class="control-input neon-input">
-                    <option value="All">Tous</option>
-                    <option value="POKÉMON">POKÉMON</option>
-                    <option value="CLASH ROYAL">CLASH ROYAL</option>
-                </select>
+        <section id="cart-view" class="view hidden">
+            <h2 class="neon-red-text shake-hard">VOTRE PANIER ABSURDE</h2>
+            <div id="cart-items">
+                </div>
+            <div id="cart-summary" class="summary-box">
+                <p>Sous-total : <span id="subtotal">0.00€</span></p>
+                <p class="glitch-text">TVA de 163% (OUI, 163%) : <span id="vat">0.00€</span></p>
+                <h3>Total à Payer : <span id="total-price" class="neon-green-text">0.00€</span></h3>
             </div>
-
-            <div class="controls-group">
-                <label for="sort-by">Trier par:</label>
-                <select id="sort-by" class="control-input neon-input">
-                    <option value="price-asc">Prix A → Z</option>
-                    <option value="price-desc">Prix Z → A</option>
-                    <option value="name-asc">Nom A → Z</option>
-                </select>
-            </div>
-
-            <div class="controls-group search-group">
-                <label for="search-input">Recherche:</label>
-                <input type="text" id="search-input" placeholder="Rechercher une carte..." class="control-input neon-input">
-            </div>
+            <button id="checkout-button" class="buy-button">PROCÉDER AU PAIEMENT (LOL)</button>
         </section>
 
-        <section id="product-grid-view" class="product-grid-view container" aria-live="polite">
-            </section>
+        <section id="instant-goofy-view" class="view hidden">
+            <h2 class="neon-pink-text wiggle">Le Panneau de Boutons Sonores de l'Instant !</h2>
+            <p>Attention, ça tremble et ça décale. C'est fait pour énerver.</p>
+            <div id="goofy-buttons" class="button-panel">
+                </div>
+        </section>
 
-        <section id="product-detail-view" class="product-detail-view" aria-hidden="true" style="display:none;">
-            </section>
     </main>
 
-    <aside id="cart-drawer" class="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title" aria-hidden="true">
-        <div class="drawer-header">
-            <h2 id="cart-title" class="glitch-text">🛒 Votre Panier Goofy</h2>
-            <button id="close-cart-btn" class="close-button" aria-label="Fermer le panier">✖</button>
-        </div>
-        <div id="cart-items" class="cart-items">
-            <p class="empty-cart-message">Votre panier est désespérément vide...</p>
-        </div>
-        <div class="cart-summary">
-            <p>Sous-total : <span id="subtotal">€0.00</span></p>
-            <p>TVA (20%) : <span id="tva-amount">€0.00</span></p>
-            <h3>Total TTC : <span id="total-ttc" class="neon-text">€0.00</span></h3>
-        </div>
-        <div class="cart-actions">
-            <button id="simulate-payment-btn" class="goofy-button neon-button full-width">Simuler Paiement (Confettis !)</button>
-            <button id="clear-cart-btn" class="goofy-button full-width clear-button">Vider le Panier</button>
-        </div>
-    </aside>
-
-    <div id="payment-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="payment-title" aria-hidden="true">
-        <div class="modal-content">
-            <h2 id="payment-title" class="glitch-text">🎉 Paiement Simulé Réussi ! 🎉</h2>
-            <p>Merci pour votre achat hautement suspect. Votre panier a été vidé (par magie). Profitez des confettis !</p>
-            <button id="close-payment-modal" class="goofy-button neon-button">Fermer</button>
-        </div>
+    <div id="cart-icon" class="sticky-cart bounce" onclick="router.navigate('cart')">
+        🛒 <span id="cart-counter" class="neon-red-text">0</span>
     </div>
 
-    <footer class="goofy-footer">
-        <p>&copy; 2025 Card Goofy Shop. Attention : contient 100% de Goofy. (Mentions légales fictives)</p>
-    </footer>
-
+    <div id="popup-container">
+        </div>
+    
     <script src="script.js"></script>
 </body>
 </html>
