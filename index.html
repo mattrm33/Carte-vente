@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartes Pro | Le catalogue de cartes pro</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --background-color: #f8f9fa;
+            --text-color: #343a40;
+            --card-bg: #ffffff;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+        }
+
+        /* Réinitialisation de base */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding-top: var(--header-height); /* Espace pour le header fixe */
+        }
+
+        /* Header */
+        header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: var(--header-height);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo a {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: var(--primary-color);
+        }
+
+        .cart-icon-container {
+            position: relative;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .cart-icon-container:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+
+        .cart-icon-container svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--text-color);
+        }
+
+        .cart-counter {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.75em;
+            font-weight: 700;
+            line-height: 1;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        /* Layout général */
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        /* Section Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color), #0056b3);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        /* Section de filtres et tri */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            align-items: center;
+        }
+
+        .controls label {
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-right: 5px;
+        }
+
+        .controls select,
+        .controls input[type="text"] {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1em;
+            min-width: 150px;
+            flex-grow: 1;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+        /* Grille de produits */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        /* Carte de produit */
+        .product-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-card h3 {
+            font-size: 1.3em;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        .product-card p {
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            color: var(--secondary-color);
+        }
+
+        .product-card .price {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--danger-color);
+            margin-top: auto; /* Pousse le prix et le bouton vers le bas */
+            margin-bottom: 10px;
+        }
+
+        .add-to-cart-btn {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: #218838;
+        }
+        
+        .add-to-cart-btn:focus,
+        .controls select:focus,
+        .controls input[type="text"]:focus,
+        .modal button:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--text-color);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.9em;
+        }
+
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        
+        /* Modal Panier */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none; /* Caché par défaut */
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal.open {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--text-color);
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+        
+        .close-btn:hover {
+            color: var(--danger-color);
+        }
+
+        .modal h2 {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dotted var(--border-color);
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .item-details {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        .item-details img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        .item-info h4 {
+            margin: 0;
+            font-size: 1.1em;
+            color: var(--text-color);
+        }
+
+        .item-info p {
+            margin: 2px 0 0 0;
+            font-size: 0.9em;
+            color: var(--secondary-color);
+        }
+
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quantity-controls button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s;
+        }
+
+        .quantity-controls button:hover {
+            background-color: #0056b3;
+        }
+
+        .quantity-controls input {
+            width: 40px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 5px 0;
+        }
+
+        .remove-item-btn {
+            background: none;
+            border: none;
+            color: var(--danger-color);
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: color 0.3s;
+            margin-left: 10px;
+        }
+        
+        .remove-item-btn:hover {
+            color: #a71d2a;
+        }
+
+        .cart-summary {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid var(--border-color);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .summary-row.total {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: var(--danger-color);
+            margin-top: 10px;
+        }
+
+        .cart-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .cart-actions button {
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, opacity 0.3s;
+        }
+
+        .checkout-btn {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .checkout-btn:hover {
+            background-color: #218838;
+        }
+
+        .clear-cart-btn {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .clear-cart-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .empty-cart-message {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--secondary-color);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                padding: 0 15px;
+            }
+
+            nav ul {
+                display: none; /* Masque la navigation principale sur mobile */
+            }
+
+            .logo a {
+                font-size: 1.5em;
+            }
+
+            .hero {
+                padding: 40px 15px;
+                margin-top: 0;
+            }
+
+            .hero h1 {
+                font-size: 2em;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .controls label {
+                margin-bottom: 5px;
+            }
+
+            .controls select,
+            .controls input[type="text"] {
+                min-width: 100%;
+            }
+
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 15px;
+            }
+            
+            .item-details img {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .cart-item {
+                flex-wrap: wrap;
+            }
+            
+            .item-controls {
+                margin-top: 10px;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo"><a href="#">Cartes Pro</a></div>
+        <nav>
+            <ul>
+                <li><a href="#catalogue">Catalogue</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#" onclick="openCart(event)">Panier</a></li>
+            </ul>
+        </nav>
+        <div class="cart-icon-container" role="button" aria-label="Ouvrir le panier" tabindex="0" onclick="openCart(event)" onkeydown="if(event.key === 'Enter') openCart(event)">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm-9-8L4.2 4.6l-1-2.2L1 2v2h2.2l3.4 7.1c.2.5.7.8 1.2.8h11.1c.5 0 .9-.3 1.1-.7l3.2-6.4c.1-.2.2-.4.2-.6 0-.6-.5-1-1-1H7.1L6 4.6l-1-2.2L3 2v2h2.2L7 12h11.1c.5 0 .9-.3 1.1-.7l3.2-6.4c.1-.2.2-.4.2-.6 0-.6-.5-1-1-1H7.1L6 4.6l-1-2.2L3 2v2h2.2L7 12h11.1c.5 0 .9-.3 1.1-.7L21 6H8l1-2h11.5c.3 0 .5.2.5.5s-.2.5-.5.5H8l.9 1.8L7 18zm10-4H7.8l-1.1-2h12.5l-2.4 4z"/>
+            </svg>
+            <span class="cart-counter" id="cart-count">0</span>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Bienvenue dans le Catalogue Pro de Cartes</h1>
+            <p>Trouvez les cartes de collection les plus rares et les plus recherchées.</p>
+        </section>
+
+        <section id="catalogue">
+            <h2>Notre Catalogue</h2>
+
+            <div class="controls">
+                <div class="filter-group">
+                    <label for="category-filter">Catégorie :</label>
+                    <select id="category-filter" aria-label="Filtrer par catégorie">
+                        <option value="all">Toutes</option>
+                        <option value="Pokemon">Pokemon</option>
+                        <option value="Clash Royal">Clash Royal</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="sort-by">Trier par :</label>
+                    <select id="sort-by" aria-label="Options de tri">
+                        <option value="name-asc">Nom (A→Z)</option>
+                        <option value="price-asc">Prix (Croissant)</option>
+                        <option value="price-desc">Prix (Décroissant)</option>
+                    </select>
+                </div>
+
+                <div class="filter-group" style="flex-grow: 2;">
+                    <label for="search-input">Rechercher :</label>
+                    <input type="text" id="search-input" placeholder="Rechercher par nom..." aria-label="Rechercher des produits par nom">
+                </div>
+            </div>
+
+            <div class="product-grid" id="product-list">
+                </div>
+        </section>
+    </main>
+
+    <div id="cart-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="cart-modal-title">
+        <div class="modal-content">
+            <button class="close-btn" aria-label="Fermer le panier" onclick="closeCart()">×</button>
+            <h2 id="cart-modal-title">Votre Panier</h2>
+
+            <div id="cart-items-container">
+                </div>
+
+            <div id="empty-cart-message" class="empty-cart-message" style="display: none;">
+                Votre panier est vide.
+            </div>
+
+            <div class="cart-summary" id="cart-summary-details" style="display: none;">
+                <div class="summary-row">
+                    <span>Sous-total HT :</span>
+                    <span id="subtotal-ht">€0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span>TVA (20%) :</span>
+                    <span id="tva-amount">€0.00</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total TTC :</span>
+                    <span id="total-ttc">€0.00</span>
+                </div>
+
+                <div class="cart-actions">
+                    <button class="checkout-btn" onclick="simulatePayment()">Simuler paiement</button>
+                    <button class="clear-cart-btn" onclick="clearCart()">Vider le panier</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="contact">
+        <div class="container">
+            <p>&copy; 2025 Cartes Pro. Tous droits réservés.</p>
+            <p>
+                <a href="#">Conditions Générales</a> |
+                <a href="#">Politique de Confidentialité</a> |
+                Contact fictif : 123 Rue de la Carte, 75001 Paris | Tel : 01 23 45 67 89
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Tableau de produits (source de données locale)
+        const products = [
+            // Catégorie Pokemon
+            { id: 1, name: 'same_niggaz EX', category: 'Pokemon', price: 49.99, imageUrl: 'https://i.imgur.com/3FumhPU.jpeg', alt: 'Carte Pokemon same_niggaz EX' },
+            // Catégorie Clash Royal
+            { id: 2, name: 'kyls262626', category: 'Clash Royal', price: 12.99, imageUrl: 'https://i.imgur.com/UMx1Alm.png', alt: 'Carte Clash Royal kyls262626' },
+            { id: 3, name: 'jules', category: 'Clash Royal', price: 9.99, imageUrl: 'https://i.imgur.com/wqTAFue.png', alt: 'Carte Clash Royal jules' },
+            { id: 4, name: 'dark kyls', category: 'Clash Royal', price: 14.99, imageUrl: 'https://i.imgur.com/vmgKjDB.png', alt: 'Carte Clash Royal dark kyls' },
+            { id: 5, name: 'AaronVolt', category: 'Clash Royal', price: 11.99, imageUrl: 'https://i.imgur.com/sqQjbGW.png', alt: 'Carte Clash Royal AaronVolt' },
+            { id: 6, name: 'Mega Kyls', category: 'Clash Royal', price: 19.99, imageUrl: 'https://i.imgur.com/T5NsxZt.png', alt: 'Carte Clash Royal Mega Kyls' },
+        ];
+
+        const CART_STORAGE_KEY = 'pro_cards_cart';
+        const TVA_RATE = 0.20; // 20%
+
+        // --- Fonctions de Panier (Client-Side) ---
+
+        /**
+         * Charge le panier depuis localStorage.
+         * @returns {Array} Le contenu du panier (tableau d'objets item) ou un tableau vide.
+         */
+        function loadCart() {
+            try {
+                const cartData = localStorage.getItem(CART_STORAGE_KEY);
+                return cartData ? JSON.parse(cartData) : [];
+            } catch (e) {
+                console.error("Erreur de chargement du panier local:", e);
+                return [];
+            }
+        }
+
+        /**
+         * Sauvegarde le panier dans localStorage.
+         * @param {Array} cart Le tableau du panier à sauvegarder.
+         */
+        function saveCart(cart) {
+            try {
+                localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+            } catch (e) {
+                console.error("Erreur de sauvegarde du panier local:", e);
+            }
+        }
+
+        /**
+         * Met à jour l'affichage du compteur d'articles dans le header.
+         * @param {Array} cart Le tableau du panier.
+         */
+        function updateCartCounter(cart) {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cart-count').textContent = totalItems;
+        }
+
+        /**
+         * Ajoute un produit au panier ou augmente sa quantité s'il existe déjà.
+         * @param {number} productId L'ID du produit à ajouter.
+         */
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            let cart = loadCart();
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    imageUrl: product.imageUrl,
+                    alt: product.alt,
+                    quantity: 1
+                });
+            }
+
+            saveCart(cart);
+            updateCartCounter(cart);
+            renderCartModal(cart); // Mettre à jour la modale si elle est ouverte
+            alert(`${product.name} ajouté au panier !`);
+        }
+
+        /**
+         * Modifie la quantité d'un article dans le panier.
+         * @param {number} productId L'ID du produit.
+         * @param {number} newQuantity La nouvelle quantité (doit être >= 1).
+         */
+        function updateItemQuantity(productId, newQuantity) {
+            let cart = loadCart();
+            const quantity = parseInt(newQuantity);
+
+            if (isNaN(quantity) || quantity < 1) return; // Validation côté client
+
+            const item = cart.find(i => i.id === productId);
+            if (item) {
+                item.quantity = quantity;
+                saveCart(cart);
+                updateCartCounter(cart);
+                renderCartModal(cart);
+            }
+        }
+
+        /**
+         * Supprime un article du panier.
+         * @param {number} productId L'ID du produit à supprimer.
+         */
+        function removeItem(productId) {
+            let cart = loadCart();
+            cart = cart.filter(item => item.id !== productId);
+
+            saveCart(cart);
+            updateCartCounter(cart);
+            renderCartModal(cart);
+        }
+
+        /**
+         * Vide complètement le panier.
+         */
+        function clearCart() {
+            if (confirm("Êtes-vous sûr de vouloir vider le panier ?")) {
+                saveCart([]);
+                updateCartCounter([]);
+                renderCartModal([]);
+            }
+        }
+
+        /**
+         * Simule le processus de paiement (confirmation + vidage du panier).
+         */
+        function simulatePayment() {
+            const cart = loadCart();
+            if (cart.length === 0) {
+                alert("Votre panier est vide. Ajoutez des articles avant de payer.");
+                return;
+            }
+
+            const totalTTC = calculateTotals(cart).totalTTC;
+            alert(`Paiement simulé réussi ! Total: €${totalTTC.toFixed(2)}. Merci de votre achat !`);
+
+            // Vider le panier après paiement simulé
+            saveCart([]);
+            updateCartCounter([]);
+            renderCartModal([]);
+            closeCart();
+        }
+
+        /**
+         * Calcule le sous-total HT, la TVA et le total TTC.
+         * @param {Array} cart Le tableau du panier.
+         * @returns {{subtotalHT: number, tvaAmount: number, totalTTC: number}} Les totaux calculés.
+         */
+        function calculateTotals(cart) {
+            const subtotalHT = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tvaAmount = subtotalHT * TVA_RATE;
+            const totalTTC = subtotalHT + tvaAmount;
+
+            return { subtotalHT, tvaAmount, totalTTC };
+        }
+
+        /**
+         * Affiche la modale du panier.
+         */
+        function openCart(event) {
+            event.preventDefault();
+            const cart = loadCart();
+            renderCartModal(cart);
+            document.getElementById('cart-modal').classList.add('open');
+            document.body.style.overflow = 'hidden'; // Empêche le défilement du corps
+        }
+
+        /**
+         * Cache la modale du panier.
+         */
+        function closeCart() {
+            document.getElementById('cart-modal').classList.remove('open');
+            document.body.style.overflow = ''; // Rétablit le défilement du corps
+        }
+
+        /**
+         * Génère et affiche le contenu de la modale du panier.
+         * @param {Array} cart Le tableau du panier.
+         */
+        function renderCartModal(cart) {
+            const itemsContainer = document.getElementById('cart-items-container');
+            const summaryDetails = document.getElementById('cart-summary-details');
+            const emptyMessage = document.getElementById('empty-cart-message');
+            itemsContainer.innerHTML = ''; // Nettoyer le contenu précédent
+
+            if (cart.length === 0) {
+                emptyMessage.style.display = 'block';
+                summaryDetails.style.display = 'none';
+            } else {
+                emptyMessage.style.display = 'none';
+                summaryDetails.style.display = 'block';
+
+                cart.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'cart-item';
+                    itemElement.innerHTML = `
+                        <div class="item-details">
+                            <img src="${item.imageUrl}" alt="${item.alt}" loading="lazy">
+                            <div class="item-info">
+                                <h4>${item.name}</h4>
+                                <p>Prix unitaire : €${item.price.toFixed(2)}</p>
+                            </div>
+                        </div>
+                        <div class="item-controls">
+                            <div class="quantity-controls">
+                                <button onclick="updateItemQuantity(${item.id}, ${item.quantity - 1})" aria-label="Diminuer la quantité de ${item.name}">-</button>
+                                <input type="number" value="${item.quantity}" min="1" aria-label="Quantité de ${item.name}"
+                                       onchange="updateItemQuantity(${item.id}, this.value)">
+                                <button onclick="updateItemQuantity(${item.id}, ${item.quantity + 1})" aria-label="Augmenter la quantité de ${item.name}">+</button>
+                            </div>
+                            <span style="min-width: 60px; text-align: right;">€${(item.price * item.quantity).toFixed(2)}</span>
+                            <button class="remove-item-btn" aria-label="Supprimer ${item.name}" onclick="removeItem(${item.id})">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                            </button>
+                        </div>
+                    `;
+                    itemsContainer.appendChild(itemElement);
+                });
+
+                // Mise à jour des totaux
+                const { subtotalHT, tvaAmount, totalTTC } = calculateTotals(cart);
+                document.getElementById('subtotal-ht').textContent = `€${subtotalHT.toFixed(2)}`;
+                document.getElementById('tva-amount').textContent = `€${tvaAmount.toFixed(2)}`;
+                document.getElementById('total-ttc').textContent = `€${totalTTC.toFixed(2)}`;
+            }
+        }
+
+
+        // --- Fonctions de Catalogue (Affichage/Filtre/Tri) ---
+
+        /**
+         * Génère le HTML pour une carte de produit.
+         * @param {Object} product L'objet produit.
+         * @returns {string} Le HTML de la carte.
+         */
+        function createProductCard(product) {
+            return `
+                <div class="product-card">
+                    <img src="${product.imageUrl}" alt="${product.alt}" loading="lazy">
+                    <div class="card-content">
+                        <h3>${product.name}</h3>
+                        <p>Catégorie : <strong>${product.category}</strong></p>
+                        <span class="price">€${product.price.toFixed(2)}</span>
+                        <button class="add-to-cart-btn" onclick="addToCart(${product.id})" data-product-id="${product.id}">
+                            Ajouter au panier
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * Filtre et trie les produits, puis les affiche.
+         */
+        function renderProducts() {
+            const categoryFilter = document.getElementById('category-filter').value;
+            const sortBy = document.getElementById('sort-by').value;
+            const searchInput = document.getElementById('search-input').value.toLowerCase().trim();
+
+            let filteredProducts = products.filter(product => {
+                // Filtrage par catégorie
+                const categoryMatch = categoryFilter === 'all' || product.category === categoryFilter;
+
+                // Filtrage par recherche de nom (insensible à la casse)
+                const searchMatch = product.name.toLowerCase().includes(searchInput);
+
+                return categoryMatch && searchMatch;
+            });
+
+            // Tri
+            filteredProducts.sort((a, b) => {
+                switch (sortBy) {
+                    case 'price-asc':
+                        return a.price - b.price;
+                    case 'price-desc':
+                        return b.price - a.price;
+                    case 'name-asc':
+                    default:
+                        return a.name.localeCompare(b.name);
+                }
+            });
+
+            const productListElement = document.getElementById('product-list');
+            productListElement.innerHTML = filteredProducts.map(createProductCard).join('');
+
+            if (filteredProducts.length === 0) {
+                 productListElement.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; padding: 20px;">Aucun produit ne correspond à vos critères de recherche.</p>';
+            }
+        }
+
+        // --- Initialisation ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialiser l'affichage du panier (compteur)
+            updateCartCounter(loadCart());
+
+            // Initialiser le catalogue
+            renderProducts();
+
+            // Ajouter les écouteurs d'événements pour les contrôles de filtre/tri/recherche
+            document.getElementById('category-filter').addEventListener('change', renderProducts);
+            document.getElementById('sort-by').addEventListener('change', renderProducts);
+            document.getElementById('search-input').addEventListener('input', renderProducts);
+
+            // Fermer la modale du panier en cliquant en dehors
+            document.getElementById('cart-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'cart-modal') {
+                    closeCart();
+                }
+            });
+            
+            // Fermer la modale du panier avec la touche Echap
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && document.getElementById('cart-modal').classList.contains('open')) {
+                    closeCart();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
